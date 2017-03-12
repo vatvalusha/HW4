@@ -75,7 +75,7 @@ public class TetrisFabrycaMethod {
  * Field where will be put our shapes
  */
 class Field {
-    List<TetrisShape> shapes = new ArrayList<>();
+    List<TetrisShape> shapes = new ArrayList<TetrisShape>();
 
     int capacity;
 
