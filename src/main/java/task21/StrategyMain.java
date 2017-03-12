@@ -7,67 +7,88 @@ package task21;
 
 public class StrategyMain {
     public static void main(String[] args) {
-        FantasyHero hero = new Vampire(10, 15);
-        System.out.println(hero.toString());
-        hero.performFly();
-        hero.performWalk();
+        FantasyHero vampire = new Vampire(10, 15, false);
+        vampire.creatorPerformance();
+        FantasyHero troll = new Troll(13, 20, true);
+        troll.creatorPerformance();
+        for(int i = 0; i < 10; i++) {
+            troll.fight(vampire);
+        }
+
+        System.out.println(vampire.toString());
+        System.out.println(troll.toString());
     }
+
 }
 
+/**
+ * Strategy
+ */
 interface WalkAble {
-    void walk();
+    String walk();
 }
 
+/**
+ * Strategy
+ */
 interface FlyAble {
-    void fly();
+    String fly();
 }
 
 class UnableWalk implements WalkAble {
-    public void walk() {
-        System.out.println("I can't walk");
+    public String walk() {
+        return "I can't walk";
     }
 }
 
 class FourUngulatesWalk implements WalkAble {
 
-    public void walk() {
-        System.out.println("I'm is four ungulates");
+    public String walk() {
+        return "I'm is four ungulates";
     }
 }
 
-
 class WalkCrawl implements WalkAble {
-    public void walk() {
-        System.out.println("I'm crawling");
+    public String walk() {
+        return "I'm crawling";
     }
 }
 
 class WalkStright implements WalkAble {
-    public void walk() {
-        System.out.println("I'm the upright creature");
+    public String walk() {
+        return "I'm the upright creature";
     }
 }
 
 class FlyWithWings implements FlyAble {
-    public void fly() {
-        System.out.println("I'm using wings for fly ");
+    public String fly() {
+        return "I'm using wings for fly ";
+    }
+}
+
+class FlyUseMagic implements FlyAble {
+    public String fly() {
+        return "I'm fly using super magic";
     }
 }
 
 class FlyWithCloak implements FlyAble {
-    public void fly() {
-        System.out.println("I'm using cloak for fly");
+    public String fly() {
+        return "I'm using cloak for fly";
     }
 }
 
 class FlyNoWay implements FlyAble {
-    public void fly() {
-        System.out.println("I can't fly");
+    public String fly() {
+        return "I can't fly";
     }
 }
 
-
+/**
+ * Context
+ */
 abstract class FantasyHero {
+    boolean magic;
     String name;
     double damage;
     double heath = 100;
@@ -78,7 +99,7 @@ abstract class FantasyHero {
     WalkAble walkAble;
 
     public double damage() {
-        damage = intelligence * (agility / 4.9);
+        damage = (intelligence + agility)/2;
         return damage;
     }
 
@@ -108,7 +129,29 @@ abstract class FantasyHero {
     public String toString() {
         return "heath : " + heath +
                 ",\nintelligence : " + intelligence +
-                ",\nagility : " + agility;
+                ",\nagility : " + agility + ",\nmagic : " + magic
+                + ",\nFlyAbility : " + flyAble.fly()
+                + ",\nWalkAbility : " + walkAble.walk();
+    }
+
+    public void creatorPerformance() {
+        this.damage();
+        this.performFly();
+        this.performWalk();
+    }
+
+    public void fight(FantasyHero hero) {
+        if (this.heath <= 0) {
+            System.out.println(this.name + " KILLED");
+            return;
+        }
+        if (hero.heath <= 0) {
+            System.out.println(hero.name + " KILLED");
+            return;
+        }
+        this.heath -= hero.damage;
+        hero.heath -= this.damage;
+
     }
 }
 
@@ -135,14 +178,16 @@ class Orc extends FantasyHero {
 
 class Troll extends FantasyHero {
 
-    public Troll(double intelligence, double agility) {
+    public Troll(double intelligence, double agility, boolean magic) {
+        this.magic = magic;
         name = "Troll";
         this.agility = agility;
         this.intelligence = intelligence;
-        flyAble = new FlyNoWay();
+        if (magic) {
+            flyAble = new FlyUseMagic();
+        } else flyAble = new FlyNoWay();
         walkAble = new WalkStright();
     }
-
     @Override
     public void display() {
         System.out.println("Pray for the priest");
@@ -162,6 +207,7 @@ class Pegasus extends FantasyHero {
         this.intelligence = intelligence;
         flyAble = new FlyWithWings();
         walkAble = new FourUngulatesWalk();
+
     }
 
     @Override
@@ -177,12 +223,13 @@ class Pegasus extends FantasyHero {
 
 class Elf extends FantasyHero {
 
-    public Elf(double intelligence, double agility) {
+    public Elf(double intelligence, double agility, boolean magic) {
         name = "Elf";
         this.agility = agility;
         this.intelligence = intelligence;
         flyAble = new FlyNoWay();
         walkAble = new WalkStright();
+
     }
 
     @Override
@@ -198,13 +245,14 @@ class Elf extends FantasyHero {
 
 
 class Vampire extends FantasyHero {
-    public Vampire(double intelligence, double agility) {
+    public Vampire(double intelligence, double agility, boolean magic) {
+        this.magic = magic;
         name = "Vampire";
         this.agility = agility;
         this.intelligence = intelligence;
         flyAble = new FlyWithCloak();
         walkAble = new WalkStright();
-        damage();
+
     }
 
     @Override
@@ -219,12 +267,14 @@ class Vampire extends FantasyHero {
 }
 
 class Harpy extends FantasyHero {
-    public Harpy(double intelligence, double agility) {
+    public Harpy(double intelligence, double agility, boolean magic) {
+        this.magic = magic;
         name = "Harpy";
         this.agility = agility;
         this.intelligence = intelligence;
         flyAble = new FlyWithWings();
         walkAble = new WalkCrawl();
+
     }
 
     @Override
