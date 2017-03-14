@@ -8,7 +8,7 @@ import java.util.Scanner;
  */
 public class MainPrototype {
     public static void main(String[] args) {
-        Article article = Article.createArticle("Pattern", 11, "Valerii");
+        Article article = Article.createArticle("Pattern", 9, "Valerii");
         System.out.println("Original: " + article);
 
         Article copy = (Article) article.clone();
@@ -45,31 +45,22 @@ class Article implements Prototype {
         return new Article(name, newPages, creator);
     }
 
-    @Override
+
     public Object clone() {
         return createArticle(name, pages, creator);
     }
 
-    public String getName() {
-        return name;
-    }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public int getPages() {
-        return pages;
-    }
 
     public void setPages(int pages) {
 
         this.pages = checkPages(pages);
     }
 
-    public String getCreator() {
-        return creator;
-    }
 
     public static int checkPages(int pages) {
         Scanner scanner = new Scanner(System.in);

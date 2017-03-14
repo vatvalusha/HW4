@@ -64,6 +64,11 @@ class GrandWithdrawn implements State {
  */
 class GrandForStudy {
     State state = new GrandCreate();
+
+    public State getState() {
+        return state;
+    }
+
     private int countMaxGrand = 10;
 
     public void setState(State state) {

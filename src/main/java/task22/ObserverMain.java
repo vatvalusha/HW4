@@ -14,8 +14,8 @@ public class ObserverMain {
         PostOffice postOffice = new PostOffice();
         postOffice.addObserve(new ConsoleObserve());
         postOffice.addObserve(new FileWriteObserve());
-        postOffice.setMeasurements(4,"Central street");
-        postOffice.setMeasurements(10,"Maydan Nezalegnosty Street");
+        postOffice.setMeasurements(4, "Central street");
+        postOffice.setMeasurements(10, "Maydan Nezalegnosty Street");
     }
 }
 
@@ -68,7 +68,7 @@ class ConsoleObserve implements Observer {
 class FileWriteObserve implements Observer {
     public void handleEvent(int countNewEdition, String address) throws IOException {
         File file;
-        file = File.createTempFile("New Post","_txt");
+        file = File.createTempFile("New Post", "_txt");
         PrintWriter writer = new PrintWriter(file);
         writer.print("New post. Count " + countNewEdition + " Address Post Office: " + address);
         writer.println();

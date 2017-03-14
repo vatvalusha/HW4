@@ -62,9 +62,8 @@ class GameTicTacToe {
         Scanner scanner = new Scanner(System.in);
         Integer n = 0;
         while (true) {
-//            while (!scanner.hasNextInt())
-//                scanner.next();
-            if(checkIntegerValueIncorrect(scanner)) {
+
+            if (checkIntegerValueIncorrect(scanner)) {
                 n = scanner.nextInt();
             }
             if (n >= 0 && n < field.length) {
@@ -197,8 +196,7 @@ public class TicTacToe {
             }
         } while (check);
         toe.showField();
-        System.out.println();
-        System.out.println("The winner is " + (flag ? "X-Player" : "O-Player") + "!");
+        System.out.println("\nThe winner is " + (flag ? "X-Player" : "O-Player") + "!");
     }
 }
 

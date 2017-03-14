@@ -150,7 +150,15 @@ abstract class FantasyHero {
             return;
         }
         this.heath -= hero.damage;
+        if (this.heath <= 0) {
+            System.out.println(this.name + " KILLED");
+            return;
+        }
         hero.heath -= this.damage;
+        if (hero.heath <= 0) {
+            System.out.println(hero.name + " KILLED");
+            return;
+        }
 
     }
 }
