@@ -8,10 +8,10 @@ public class StateApp {
         State withdrawn = new GrandView();
         GrandForStudy study = new GrandForStudy();
         study.setState(withdrawn);
-
         for (int i = 0; i < 100; i++) {
             study.currentState();
             study.nextSate();
+            if(State.getCounter()==0) i =100;
         }
     }
 }
@@ -19,43 +19,130 @@ public class StateApp {
 /**
  * State
  */
-interface State {
-    void currentState();
+abstract class State {
+    private static int counter = 10;
+
+    static State state = new GrandCreate();
+
+    abstract void currentState();
+
+    abstract void nextState();
+
+    public static void setState(State stateIn) {
+        state = stateIn;
+    }
+
+    public static State getState() {
+        return state;
+    }
+
+    public static int getCounter() {
+        return counter;
+    }
+
+    public static void setCounter(int counter) {
+        State.counter = counter;
+    }
 }
 
-class GrandCreate implements State {
+/**
+ * Concrete State
+ */
+class GrandCreate extends State {
     public void currentState() {
         System.out.print("CREATED: ");
     }
+
+    public void nextState()
+    {
+        if (Math.random() > 0.5)
+            setState(new GrandView());
+        else
+            setState(new GrandDeferred());
+    }
 }
 
-class GrandView implements State {
+/**
+ * Concrete State
+ */
+class GrandView extends State {
+    double a = Math.random();
+
     public void currentState() {
         System.out.print("VIEW: ");
     }
+
+    public void nextState() {
+        if (a < 0.25)
+            setState(new GrandDeferred());
+        else if (0.5 > a && a > 0.25)
+            setState(new GrandWithdrawn());
+        else if (0.75 > a && a > 0.5)
+            setState(new GrandConfirmed());
+        else
+            setState(new GrandRejected());
+    }
 }
 
-class GrandDeferred implements State {
+/**
+ * Concrete State
+ */
+class GrandDeferred extends State {
     public void currentState() {
         System.out.print("DEFERRED: ");
     }
+
+    public void nextState() {
+        setState(new GrandView());
+    }
 }
 
-class GrandRejected implements State {
+/**
+ * Concrete State
+ */
+class GrandRejected extends State {
     public void currentState() {
         System.out.print("REJECTED: ");
     }
-}
 
-class GrandConfirmed implements State {
-    public void currentState() {
-        System.out.print("CONFIRMED: ");
+    public void nextState() {
+        setState(new GrandView());
     }
 }
 
-class GrandWithdrawn implements State {
+/**
+ * Concrete State
+ */
+class GrandConfirmed extends State {
+    public void currentState() {
+        System.out.print("CONFIRMED: ");
+    }
+
+    public void nextState() {
+        if (State.getCounter() > 0)
+        {
+            setState(new GrandCreate());
+            State.setCounter(State.getCounter() - 1);
+            System.out.println("Apply new Grand. " + "Left : " + State.getCounter() + " place.");
+        }
+        else {
+            System.out.print("\n\nAll grand Accepted");
+            System.exit(0);
+        }
+    }
+}
+
+/**
+ * Concrete State
+ */
+class GrandWithdrawn extends State {
     public void currentState() {
         System.out.print("WITHDRAWN: ");
+    }
+
+    void nextState() {
+        setState(new GrandCreate());
+        System.out.println("next grand");
     }
 }
 
@@ -63,67 +150,67 @@ class GrandWithdrawn implements State {
  * Context
  */
 class GrandForStudy {
-    State state = new GrandCreate();
-
     public State getState() {
-        return state;
+        return State.getState();
     }
 
-    private int countMaxGrand = 10;
-
-    public void setState(State state) {
-        this.state = state;
-    }
-
-    public int getCountMaxGrand() {
-        return countMaxGrand;
+    public static void setState(State stateIn) {
+        State.setState(stateIn);
     }
 
     void nextSate() {
-        if (state instanceof GrandCreate) {
-            switch ((int) (Math.random() * 2 + 1)) {
-                case 1:
-                    setState(new GrandView());
-                    break;
-                case 2:
-                    setState(new GrandDeferred());
-                    break;
-            }
-        } else if (state instanceof GrandView) {
-            switch ((int) (Math.random() * 4 + 1)) {
-                case 1:
-                    setState(new GrandDeferred());
-                    break;
-                case 2:
-                    setState(new GrandWithdrawn());
-                    break;
-                case 3:
-                    setState(new GrandConfirmed());
-                    break;
-                case 4:
-                    setState(new GrandRejected());
-                    break;
-            }
-        } else if (state instanceof GrandDeferred) setState(new GrandView());
-        else if (state instanceof GrandRejected) {
-            setState(new GrandView());
-            System.out.print("Sorry, but you not fit us. ");
-            System.out.println("View new grand");
-        } else if (state instanceof GrandConfirmed) {
-            if (countMaxGrand > 0) {
-                setState(new GrandCreate());
-                countMaxGrand--;
-                System.out.println("Apply new Grand. " + "Left : " + countMaxGrand + " place.");
-            } else {
-                System.out.println("Sorry, but we have enough student.");
-            }
-        } else if (state instanceof GrandWithdrawn) {
-            setState(new GrandView());
-            System.out.println("View new grand");
-        }
+        State.getState().nextState();
     }
 
     void currentState() {
-        state.currentState();
+        State.getState().currentState();
     }
+
+    {//        if (state instanceof GrandCreate) {
+//            switch ((int) (Math.random() * 2 + 1)) {
+//                case 1:
+//                    setState(new GrandView());
+//                    break;
+//                case 2:
+//                    setState(new GrandDeferred());
+//                    break;
+//            }
+//        } else if (state instanceof GrandView) {
+//            switch ((int) (Math.random() * 4 + 1)) {
+//                case 1:
+//                    setState(new GrandDeferred());
+//                    break;
+//                case 2:
+//                    setState(new GrandWithdrawn());
+//                    break;
+//                case 3:
+//                    setState(new GrandConfirmed());
+//                    break;
+//                case 4:
+//                    setState(new GrandRejected());
+//                    break;
+//            }
+//        } else if (state instanceof GrandDeferred) setState(new GrandView());
+//        else if (state instanceof GrandRejected) {
+//            setState(new GrandView());
+//            System.out.print("Sorry, but you not fit us. ");
+//            System.out.println("View new grand");
+//        } else if (state instanceof GrandConfirmed) {
+//            if (countMaxGrand > 0) {
+//                setState(new GrandCreate());
+//                countMaxGrand--;
+//                System.out.println("Apply new Grand. " + "Left : " + countMaxGrand + " place.");
+//            } else {
+//                System.out.println("Sorry, but we have enough student.");
+//            }
+//        } else if (state instanceof GrandWithdrawn) {
+//            setState(new GrandView());
+//            System.out.println("View new grand");
+//        }
+    }
+
+
 }
+
+
+
